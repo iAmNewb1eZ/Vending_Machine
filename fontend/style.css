@@ -1,0 +1,86 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: url("images/bg.jpg"); /* ตั้งค่าภาพพื้นหลัง */
+    background-size: cover; /* ทำให้ภาพเต็มพื้นที่ */
+    background-position: center; /* จัดภาพให้อยู่กลาง */
+    background-repeat: no-repeat; /* ไม่ให้ภาพซ้ำ */
+    margin: 0;
+}
+
+.menu {
+    display: flex; /* ใช้ Flexbox */
+    flex-direction: column; /* แนวตั้ง */
+    align-items: center; /* จัดให้อยู่กลางในแนวนอน */
+    text-align: center; /* จัดข้อความให้อยู่กลาง */
+    padding: 20px;
+    background: linear-gradient(135deg, #eff1f5, #d5dae2); /* เพิ่มพื้นหลังให้ดูเหมือนตู้ */
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    max-width: 800px; /* จำกัดความกว้างของตู้ */
+    margin: 20px auto; /* จัดกลางหน้า */
+    padding-bottom: 40px; /* เพิ่มช่องว่างด้านล่าง */
+}
+
+h1 {
+    font-size: 40px;
+    color: #00f5d4;
+    margin-bottom: 30px;
+}
+
+.products {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    justify-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.product {
+    width: 150px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    cursor: pointer; /* เพิ่ม cursor pointer เพื่อแสดงว่าสามารถคลิกได้ */
+    transition: transform 0.2s; /* เพิ่มการเคลื่อนไหวเมื่อโฮเวอร์ */
+}
+
+.product:hover {
+    transform: scale(1.05); /* ขยายขนาดเมื่อโฮเวอร์ */
+}
+
+.product img {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+}
+
+.product p {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.money-input {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8); /* ปรับความโปร่งใส */
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#message {
+    background-color: rgba(255, 255, 255, 0.9); /* ปรับความโปร่งใสให้สูงขึ้น */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+#overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.status-buttons-container {
+    margin: 20px 0;
+}

@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:5.7
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: vending_machine
+      MYSQL_USER: vending_user
+      MYSQL_PASSWORD: vending_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+  app:
+    build: .
+    container_name: vending_app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: vending_user
+      DB_PASSWORD: vending_password
+      DB_NAME: vending_machine
+    volumes:
+      - .:/usr/src/app
+    command: npm start
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: vending_user
+      PMA_PASSWORD: vending_password
+    depends_on:
+      - db
+volumes:
+  db_data:

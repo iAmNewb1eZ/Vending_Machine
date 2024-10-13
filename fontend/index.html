@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vending Machine</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        
+        #message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #00cc00;
+            border-radius: 10px;
+            padding: 20px;
+            z-index: 1000; 
+            display: none; 
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); 
+            display: none; 
+            z-index: 500; /
+        }
+        /* Style สำหรับกล่องแสดงยอดเงิน */
+        .money-input {
+            position: fixed; 
+            right: 20px; 
+            top: 50%; 
+            transform: translateY(-50%); /* จัดให้อยู่กลางแนวตั้ง */
+            background-color: rgba(255, 255, 255, 0.8); /* สีพื้นหลังโปร่งแสง */
+            padding: 20px;
+            border-radius: 10px; /* มุมกลม */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* เงา */
+            z-index: 1000; /* อยู่เหนือทุกอย่าง */
+        }
+        /* Style สำหรับปุ่มสถานะ */
+        .status-button {
+            margin: 10px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+            padding: 15px 25px; /* ขนาดปุ่ม */
+            border-radius: 5px;
+            border: none;
+            color: white; /* สีข้อความ */
+            cursor: pointer; /* เปลี่ยนเคอร์เซอร์ */
+            display: block; /* ทำให้ปุ่มเป็นบล็อคเพื่อให้เรียงในแนวตั้ง */
+        }
+        .status-button.ready {
+            background-color: #00cc00; /* สีเขียวสำหรับปุ่มพร้อม */
+        }
+        .status-button.not-ready {
+            background-color: #cc0000; /* สีแดงสำหรับปุ่มไม่พร้อม */
+        }
+        /* จัดปุ่มสถานะให้ไปอยู่ที่มุมซ้ายบน */
+        .status-buttons-container {
+            position: fixed; /* ใช้ fixed เพื่อให้ติดอยู่ที่ตำแหน่งที่ต้องการ */
+            top: 20px; /* ระยะห่างจากด้านบน */
+            left: 20px; /* ระยะห่างจากด้านซ้าย */
+            z-index: 1000; /* อยู่เหนือทุกอย่าง */
+        }
+    </style>
+</head>
+<body>
+
+<div class="menu">
+    <h1>MENU</h1>
+
+    <!-- ส่วนสำหรับปุ่มสถานะที่อยู่ด้านบนซ้าย -->
+    <div class="status-buttons-container">
+        <button class="status-button ready" id="ready-button">เครื่องพร้อมทำงาน</button>
+        <button class="status-button not-ready" id="not-ready-button" disabled>เครื่องไม่พร้อมทำงาน</button>
+    </div>
+
+    <div class="products">
+        <div class="product">
+            <img src="images/normal_curry.png" alt="Product 1">
+            <p>ข้าวแกงกระหรี่</p>
+            <p>ราคา 40 บาท</p>
+            <p class="stock"></p>
+        </div>
+        <div class="product">
+            <img src="images/curry_tonkatsu.png" alt="Product 2">
+            <p>ข้าวแกงกระหรี่หมูทอดทงคัตสึ</p>
+            <p>ราคา 65 บาท</p>
+            <p class="stock"></p>
+        </div>
+        <div class="product">
+            <img src="images/curry_omlet.jpg" alt="Product 3">
+            <p>ข้าวแกงกระหรี่ออมเล็ต</p>
+            <p>ราคา 50 บาท</p>
+            <p class="stock"></p>
+        </div>
+        <div class="product">
+            <img src="images/curry_tempura.png" alt="Product 4">
+            <p>ข้าวแกงกระหรี่กุ้งเทมปุระ</p>
+            <p>ราคา 65 บาท</p>
+            <p class="stock"></p>
+        </div>
+        <div class="product">
+            <img src="images/tempura.png" alt="Product 5">
+            <p>กุ้งเทมปุระ</p>
+            <p>ราคา 50 บาท</p>
+            <p class="stock"></p>
+        </div>
+        <div class="product">
+            <img src="images/tonkatsu.png" alt="Product 6">
+            <p>หมูทอดทงคัตสึ</p>
+            <p>ราคา 50 บาท</p>
+            <p class="stock"></p>
+        </div>
+    </div>
+
+    <!-- ส่วนสำหรับระบุจำนวนเงิน -->
+    <div class="money-input">
+        <h2>ยอดเงินปัจจุบัน: <span id="current-balance">0</span> บาท</h2>
+        <button onclick="addMoney(20)">เติม 20 บาท</button>
+        <button onclick="addMoney(50)">เติม 50 บาท</button>
+        <button onclick="addMoney(100)">เติม 100 บาท</button>
+        <button onclick="refund()">ขอคืนเงิน</button>
+    </div>
+
+    <!-- กล่องข้อความแสดงผล -->
+    <div id="overlay"></div>
+    <div id="message">
+        <p id="message-text"></p>
+        <button onclick="closeMessage()">ปิด</button>
+    </div>
+
+    <!-- ส่วนสำหรับแสดงตั๋ว -->
+    <div id="ticket"></div>
+</div>
+
+<script src="script.js"></script> 
+
+<script>
+    let machineReady = true; // สถานะเครื่องเริ่มต้น
+
+    // ฟังก์ชันสำหรับเปลี่ยนสถานะเครื่อง
+    function setMachineReady(ready) {
+        machineReady = ready;
+        document.getElementById('ready-button').disabled = ready;
+        document.getElementById('not-ready-button').disabled = !ready;
+
+        // แสดงข้อความเมื่อเปลี่ยนสถานะเครื่อง
+        if (ready) {
+            showMessage("เครื่องพร้อมทำงาน!");
+        } else {
+            showMessage("เครื่องไม่พร้อมทำงาน!");
+        }
+    }
+
+    // เพิ่มการทำงานให้กับปุ่มสถานะ
+    document.getElementById('ready-button').addEventListener('click', function() {
+        setMachineReady(true); // เปลี่ยนสถานะเครื่องเป็นพร้อม
+    });
+
+    document.getElementById('not-ready-button').addEventListener('click', function() {
+        setMachineReady(false); // เปลี่ยนสถานะเครื่องเป็นไม่พร้อม
+    });
+
+    // เพิ่ม Event Listener ให้กับปุ่มสินค้า
+    document.querySelectorAll('.product').forEach(product => {
+        product.addEventListener('click', () => {
+            const productName = product.querySelector('p').innerText; // ดึงชื่อผลิตภัณฑ์
+            const price = parseInt(product.querySelectorAll('p')[1].innerText.replace('ราคา ', '').replace(' บาท', '')); // ดึงราคา
+
+            // ตรวจสอบสถานะเครื่องก่อนซื้อ
+            if (!machineReady) {
+                showMessage("เครื่องไม่พร้อมทำงาน!"); // แสดงข้อความถ้าเครื่องไม่พร้อม
+                return;
+            }
+
+            purchase(productName, price); // เรียกใช้ฟังก์ชัน purchase
+        });
+    });
+</script>
+
+</body>
+</html>
